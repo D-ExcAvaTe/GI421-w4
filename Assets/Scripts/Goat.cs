@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Goat : MonoBehaviour
@@ -24,9 +23,20 @@ public class Goat : MonoBehaviour
 
     private IEnumerator EatingRoutine()
     {
+        var availableGrass = new List<EdiblePlant>(_allGrass.Count);
+        var eatWait = new WaitForSeconds(_eatDuration);
+
         while (true)
         {
-            var availableGrass = _allGrass.Where(grass => grass.IsAvailable).ToList();
+            availableGrass.Clear();
+
+            for (int i = 0; i < _allGrass.Count; i++)
+            {
+                if (_allGrass[i].IsAvailable)
+                {
+                    availableGrass.Add(_allGrass[i]);
+                }
+            }
 
             if (availableGrass.Count > 0)
             {
@@ -37,7 +47,7 @@ public class Goat : MonoBehaviour
 
                 _animator.SetBool("Eat", true);
 
-                yield return new WaitForSeconds(_eatDuration);
+                yield return eatWait;
 
                 _animator.SetBool("Eat", false);
 
